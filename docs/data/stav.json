@@ -1,0 +1,19 @@
+{
+ "tez": "2026-11-01",
+ "licence": "2026-10-30",
+ "ruian": "2026-10-31",
+ "zdroj_tez": "https://eru.gov.cz/sites/default/files/obsah/prilohy/tez-sk-11-2026-11-01.xml",
+ "zdroj_licence": "https://eru.gov.cz/sites/default/files/obsah/prilohy/lic112026-10-30-ver-1.xml",
+ "aktualizovano": "2026-11-07T19:42:41",
+ "vyroben_v_mape": 38069,
+ "vykon_MW": 22100.0,
+ "presnost": {
+  "definiční bod katastrálního území": 23816,
+  "definiční bod parcely": 14252,
+  "definiční bod obce (podle názvu obce a okresu)": 5
+ },
+ "kontroly": {
+  "okres v TEZ neodpovídá RÚIAN (obec nejspíš změnila okres)": 472,
+  "k ověření: katastr je >20 km od obce uvedené v TEZ": 21
+ }
+}

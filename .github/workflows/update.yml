@@ -1,0 +1,54 @@
+name: Měsíční aktualizace mapy výroben
+
+on:
+  schedule:
+    # ERÚ zveřejňuje datové sady TEZ k 1. dni měsíce, obvykle během prvního týdne.
+    # Běží denně 3.–12. v měsíci; když nic nového není, skript skončí bez commitu.
+    - cron: '17 5 3-12 * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Přepočítat i bez nových dat'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Aktualizace dat
+        run: python update.py ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+      - name: Commit výsledků
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs state
+          if git diff --cached --quiet; then
+            echo "Beze změn"; echo "changed=false" >> "$GITHUB_ENV"
+          else
+            git commit -m "Data ERÚ $(jq -r .tez docs/data/stav.json), licence $(jq -r .licence docs/data/stav.json)"
+            git push; echo "changed=true" >> "$GITHUB_ENV"
+          fi
+      - if: env.changed == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - if: env.changed == 'true' || github.event_name == 'workflow_dispatch'
+        id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,6 @@
+pandas==3.0.5
+numpy==2.5.3
+lxml==6.1.3
+pyproj==3.8.0
+shapely==2.2.0
+requests==2.34.2
