@@ -1,20 +1,27 @@
 """Stažení a načtení dat ERÚ: datové sady technologických energetických zařízení (TEZ)
 a seznam držitelů licencí, skupina 11 (výroba elektřiny)."""
-import re, datetime as dt
+import re, time, datetime as dt
 from pathlib import Path
 import requests
 import pandas as pd
 from lxml import etree
+from net import download_file
 
 BASE = 'https://eru.gov.cz'
 LISTING = BASE + '/zpristupnena-data'
 UA = {'User-Agent': 'vyrobny-elektriny/1.0 (open data pipeline)'}
 
 
-def _get(url, **kw):
-    r = requests.get(url, headers=UA, timeout=kw.pop('timeout', 120), **kw)
-    r.raise_for_status()
-    return r
+def _get(url, retries=5, **kw):
+    for att in range(retries):
+        try:
+            r = requests.get(url, headers=UA, timeout=kw.pop('timeout', 120), **kw)
+            r.raise_for_status()
+            return r
+        except requests.RequestException:
+            if att == retries - 1:
+                raise
+            time.sleep(5 * (att + 1))
 
 
 def _ddmmyyyy(s):
@@ -44,16 +51,7 @@ def find_latest(tez_date=None):
 
 
 def download(url, dest: Path):
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    if not dest.exists():
-        with requests.get(url, headers=UA, timeout=300, stream=True) as r:
-            r.raise_for_status()
-            tmp = dest.with_suffix('.part')
-            with open(tmp, 'wb') as f:
-                for ch in r.iter_content(1 << 20):
-                    f.write(ch)
-            tmp.rename(dest)
-    return dest
+    return download_file(url, dest)
 
 
 def read_licences(path):

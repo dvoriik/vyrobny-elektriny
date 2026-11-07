@@ -6,6 +6,7 @@ import requests
 import pandas as pd
 from lxml import etree
 from pyproj import Transformer
+from net import download_file
 
 VDP = 'https://vdp.cuzk.gov.cz/vymenny_format/soucasna'
 VF = 'urn:cz:isvs:ruian:schemas:VymennyFormatTypy:v1'
@@ -28,7 +29,14 @@ def latest_date(max_back_days=70):
         if (day + dt.timedelta(days=1)).day != 1:
             continue
         s = day.strftime('%Y%m%d')
-        r = requests.head(f'{VDP}/{s}_ST_UKSG.xml.zip', headers=UA, timeout=30, allow_redirects=True)
+        r = None
+        for att in range(4):
+            try:
+                r = requests.head(f'{VDP}/{s}_ST_UKSG.xml.zip', headers=UA, timeout=30, allow_redirects=True); break
+            except requests.RequestException:
+                time.sleep(5 * (att + 1))
+        if r is None:
+            continue
         if r.status_code == 200:
             return s
     raise RuntimeError('Nenašel jsem aktuální soubor RÚIAN ST_UKSG')
@@ -42,12 +50,7 @@ def load_state(date, cache: Path):
         return t, json.load(open(out / 'hranice.json'))
     out.mkdir(parents=True, exist_ok=True)
     zpath = cache / f'{date}_ST_UKSG.xml.zip'
-    if not zpath.exists():
-        with requests.get(f'{VDP}/{date}_ST_UKSG.xml.zip', headers=UA, timeout=600, stream=True) as r:
-            r.raise_for_status()
-            with open(zpath, 'wb') as f:
-                for ch in r.iter_content(1 << 20):
-                    f.write(ch)
+    download_file(f'{VDP}/{date}_ST_UKSG.xml.zip', zpath)
     z = zipfile.ZipFile(zpath)
     rows = collections.defaultdict(list); geoms = {}
     for ev, el in etree.iterparse(z.open(z.namelist()[0]), events=('end',), huge_tree=True):
@@ -95,18 +98,8 @@ def load_state(date, cache: Path):
 def _parse_obec(date, obec, want_kmen, tmpdir: Path, sess):
     url = f'{VDP}/{date}_OB_{obec}_UKSH.xml.zip'
     tmp = tmpdir / f'{obec}.zip'
-    for att in range(4):
-        try:
-            with sess.get(url, headers=UA, timeout=300, stream=True) as r:
-                r.raise_for_status()
-                with open(tmp, 'wb') as fh:
-                    for ch in r.iter_content(1 << 20):
-                        fh.write(ch)
-            break
-        except Exception:
-            if att == 3:
-                raise
-            time.sleep(3 * (att + 1))
+    tmp.unlink(missing_ok=True)
+    download_file(url, tmp, session=sess, retries=6, log=lambda *a: None)
     z = zipfile.ZipFile(tmp); res = []
     GID = f'{{{GML}}}id'; PTAG = f'{{{VF}}}Parcela'
     for ev, el in etree.iterparse(z.open(z.namelist()[0]), events=('end',), huge_tree=True):
