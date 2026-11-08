@@ -27,6 +27,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # plná historie, aby šel výsledek přenést na nejnovější main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -43,7 +45,14 @@ jobs:
             echo "Beze změn"; echo "changed=false" >> "$GITHUB_ENV"
           else
             git commit -m "Data ERÚ $(jq -r .tez docs/data/stav.json), licence $(jq -r .licence docs/data/stav.json)"
-            git push; echo "changed=true" >> "$GITHUB_ENV"
+            # repozitář mezitím mohl dostat jiné commity (úpravy kódu, souběžný běh):
+            # výsledky (docs/, state/) přeneseme na nejnovější main a teprve pak pushneme
+            for i in 1 2 3; do
+              git pull --rebase -X theirs origin main && git push origin HEAD:main && break
+              echo "Push se nepovedl, zkouším znovu ($i/3)"; sleep 10
+            done
+            git log -1 --oneline origin/main | grep -q "Data ERÚ" || { echo "Push selhal"; exit 1; }
+            echo "changed=true" >> "$GITHUB_ENV"
           fi
       - if: env.changed == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-pages-artifact@v3
