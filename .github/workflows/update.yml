@@ -5,6 +5,10 @@ on:
     # ERÚ zveřejňuje datové sady TEZ k 1. dni měsíce, obvykle během prvního týdne.
     # Běží denně 3.–12. v měsíci; když nic nového není, skript skončí bez commitu.
     - cron: '17 5 3-12 * *'
+  # změna kódu nebo vzhledu (šablony) -> přepočítat a nasadit hned, ne až s dalšími daty
+  push:
+    branches: [main]
+    paths: ['src/**', 'update.py', 'requirements.txt', '.github/workflows/update.yml']
   workflow_dispatch:
     inputs:
       force:
@@ -35,7 +39,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Aktualizace dat
-        run: python update.py ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+        run: python update.py ${{ (github.event_name == 'push' || github.event.inputs.force == 'true') && '--force' || '' }}
       - name: Commit výsledků
         run: |
           git config user.name "github-actions[bot]"
@@ -54,10 +58,10 @@ jobs:
             git log -1 --oneline origin/main | grep -q "Data ERÚ" || { echo "Push selhal"; exit 1; }
             echo "changed=true" >> "$GITHUB_ENV"
           fi
-      - if: env.changed == 'true' || github.event_name == 'workflow_dispatch'
+      - if: env.changed == 'true' || github.event_name != 'schedule'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
-      - if: env.changed == 'true' || github.event_name == 'workflow_dispatch'
+      - if: env.changed == 'true' || github.event_name != 'schedule'
         id: deploy
         uses: actions/deploy-pages@v4

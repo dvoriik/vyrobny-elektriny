@@ -3,190 +3,206 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
+<style id="vyr-page-css">
+/* jen samostatná stránka (GitHub Pages, artifact): pozadí a okraje stránky */
+:root{--page-bg:#f3f5f6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page-bg:#0e1215;color-scheme:dark}}
+:root[data-theme="dark"]{--page-bg:#0e1215;color-scheme:dark}
+html,body{background:var(--page-bg)}
+body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+</style>
+<style id="vyr-css">
 /* Layout: mapa jako hlavní plocha, vpravo ovládací panel; pod mapou tabulka krajů. Neutrály s chladným, „rozvodným“ nádechem. */
-:root{
-  --bg:#f3f5f6; --surface:#fcfdfd; --ink:#11161a; --ink2:#46515a; --muted:#77828b; --line:#dbe0e4; --line2:#c4ccd2;
+/* Ochrana proti stylům šablony webu (Divi), když je aplikace vložená do stránky */
+#vyrobny-app{color-scheme:light;font-weight:400;text-align:left;padding:24px 16px 32px;border-radius:12px}
+#vyrobny-app.vyr-page{padding:0;border-radius:0}
+#vyrobny-app h1,#vyrobny-app h2,#vyrobny-app h4,#vyrobny-app p,#vyrobny-app ul,#vyrobny-app li{padding:0;color:inherit}
+#vyrobny-app h1{color:var(--ink)}
+#vyrobny-app h2,#vyrobny-app h4{line-height:1.45}
+#vyrobny-app table,#vyrobny-app th,#vyrobny-app td,#vyrobny-app tr{border-top:0;border-left:0;border-right:0;margin:0}
+#vyrobny-app table{border:0}
+#vyrobny-app [hidden]{display:none!important}
+#vyrobny-app button{line-height:normal;text-transform:none;letter-spacing:normal;box-shadow:none}
+#vyrobny-app{--bg:#f3f5f6; --surface:#fcfdfd; --ink:#11161a; --ink2:#46515a; --muted:#77828b; --line:#dbe0e4; --line2:#c4ccd2;
   --land:#eef1f3; --border-kraj:#9aa5ae; --hover:rgba(17,22,26,.06);
   --g0:#eda100; --g1:#2a78d6; --g2:#1baf7a; --g3:#e87ba4; --g4:#4b5258; --g5:#6250d6;
   --s1:#cde2fb; --s2:#9ec5f4; --s3:#6da7ec; --s4:#3987e5; --s5:#256abf; --s6:#184f95; --s7:#0d366b;
   --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
   --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0e1215; --surface:#151a1e; --ink:#eef1f3; --ink2:#b9c2c9; --muted:#8a959e; --line:#262e34; --line2:#36414a;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #vyrobny-app.vyr-page{--bg:#0e1215; --surface:#151a1e; --ink:#eef1f3; --ink2:#b9c2c9; --muted:#8a959e; --line:#262e34; --line2:#36414a;
   --land:#1b2126; --border-kraj:#5b6770; --hover:rgba(238,241,243,.07);
   --g0:#c98500; --g1:#3987e5; --g2:#199e70; --g3:#d55181; --g4:#97a1a8; --g5:#9085e9;
   --s1:#104281; --s2:#184f95; --s3:#1c5cab; --s4:#2a78d6; --s5:#5598e7; --s6:#86b6ef; --s7:#cde2fb;
   color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0e1215; --surface:#151a1e; --ink:#eef1f3; --ink2:#b9c2c9; --muted:#8a959e; --line:#262e34; --line2:#36414a;
+:root[data-theme="dark"] #vyrobny-app.vyr-page{--bg:#0e1215; --surface:#151a1e; --ink:#eef1f3; --ink2:#b9c2c9; --muted:#8a959e; --line:#262e34; --line2:#36414a;
   --land:#1b2126; --border-kraj:#5b6770; --hover:rgba(238,241,243,.07);
   --g0:#c98500; --g1:#3987e5; --g2:#199e70; --g3:#d55181; --g4:#97a1a8; --g5:#9085e9;
   --s1:#104281; --s2:#184f95; --s3:#1c5cab; --s4:#2a78d6; --s5:#5598e7; --s6:#86b6ef; --s7:#cde2fb;
   color-scheme:dark}
-*{box-sizing:border-box}
-html,body{background:var(--bg);color:var(--ink)}
-body{font-family:var(--f-body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
-.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
-h1{font-family:var(--f-display);font-stretch:78%;font-weight:750;font-size:clamp(28px,4.2vw,44px);line-height:1;letter-spacing:-.01em;margin:0;text-wrap:balance}
-.sub{color:var(--ink2);margin:6px 0 0;max-width:62ch}
-.stamp{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right;line-height:1.6}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
-@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
-.mapbox{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;height:clamp(360px,72vw,min(68vh,720px))}
-canvas#map{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
-canvas#map:active{cursor:grabbing}
-.tools{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}
-.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:2px;gap:2px}
-.seg button{font:600 13px var(--f-body);color:var(--ink2);background:none;border:0;border-radius:6px;padding:5px 10px;cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
-.seg button:focus-visible,.chip:focus-visible,.zoom button:focus-visible,.link:focus-visible{outline:2px solid var(--g1);outline-offset:2px}
-.zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:4px}
-.zoom button{width:32px;height:32px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:8px;font:600 17px var(--f-body);cursor:pointer}
-.legend{position:absolute;left:10px;bottom:10px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ink2);display:flex;flex-direction:column;gap:6px;max-width:calc(100% - 20px)}
-.legend .t{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-.sizes{display:flex;align-items:flex-end;gap:12px}
-.sizes span{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--f-mono);font-size:11px}
-.sizes i{display:block;border-radius:50%;border:1.5px solid var(--ink2)}
-.ramp{display:flex}
-.ramp span{display:flex;flex-direction:column;gap:3px;font-family:var(--f-mono);font-size:10.5px;min-width:38px}
-.ramp b{display:block;height:10px}
-.tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.14);max-width:290px;z-index:5}
-.tip h4{margin:0 0 3px;font:600 14px var(--f-body)}
-.tip .m{font-family:var(--f-mono);font-size:12px;color:var(--ink2)}
-.tip ul{margin:5px 0 0;padding:0;list-style:none}
-.tip li{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}
-.tip li span:last-child{font-family:var(--f-mono);color:var(--ink2);white-space:nowrap}
-.hint{position:absolute;right:10px;bottom:10px;font-size:12px;color:var(--muted);background:color-mix(in srgb,var(--surface) 85%,transparent);padding:3px 8px;border-radius:6px}
-aside{display:flex;flex-direction:column;gap:14px;min-width:0}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
-.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.chips{display:flex;flex-direction:column;gap:4px}
-.chip{display:grid;grid-template-columns:14px minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:7px;padding:5px 6px;cursor:pointer;color:var(--ink);font:15px var(--f-body)}
-.chip:hover{background:var(--hover)}
-.chip .sw{width:12px;height:12px;border-radius:3px}
-.chip .v{font-family:var(--f-mono);font-size:12.5px;color:var(--ink2)}
-.chip[aria-pressed="false"]{color:var(--muted)}
-.chip[aria-pressed="false"] .sw{background:transparent!important;outline:1.5px solid var(--line2);outline-offset:-1.5px}
-.rowlinks{display:flex;gap:14px}
-.link{background:none;border:0;padding:0;color:var(--ink2);font:600 13px var(--f-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.kpi{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
-.kpi .big{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:34px;line-height:1}
-.kpi .unit{font-size:15px;color:var(--ink2);font-weight:600}
-.kpi .small{color:var(--ink2);font-size:14px}
-.selname{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:20px;line-height:1.1}
-.bars{display:flex;flex-direction:column;gap:7px}
-.bar{display:grid;grid-template-columns:96px minmax(0,1fr) 74px;gap:8px;align-items:center;font-size:13px}
-.bar .track{height:10px;border-radius:0 4px 4px 0;background:transparent;position:relative}
-.bar .fill{height:100%;border-radius:0 4px 4px 0;min-width:2px}
-.bar .num{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--ink2);font-variant-numeric:tabular-nums}
-.top{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
-.top li{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:13.5px}
-.top li .d{width:8px;height:8px;border-radius:50%;align-self:center}
-.top li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.top li .nm small{color:var(--muted)}
-.top li .n{font-family:var(--f-mono);font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
-.tablebox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
-.tablebox h2{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:20px;margin:0}
-.scroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
-th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
-th{font:500 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-td:first-child,th:first-child{text-align:left}
-td{font-family:var(--f-mono);font-size:12.5px;color:var(--ink2)}
-td:first-child{font-family:var(--f-body);font-size:14px;color:var(--ink)}
-tr.sel td{background:var(--hover)}
-th .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px}
-.notes{color:var(--ink2);font-size:13.5px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 28px}
-.notes p{margin:0;max-width:65ch}
-.notes b{color:var(--ink)}
-.notes a{color:var(--ink);text-underline-offset:2px}
-.secthead{display:flex;flex-direction:column;gap:4px}
-.note{margin:0;color:var(--ink2);font-size:14px;max-width:72ch}
-.chartwrap{position:relative}
-#cum{height:340px;width:100%}
-#cum svg text{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
-.leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2)}
-.leg span{display:inline-flex;align-items:center;gap:6px}
-.leg i{width:10px;height:10px;border-radius:2px;display:inline-block}
-.ctip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-size:12.5px;box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:190px;z-index:4}
-.ctip h4{margin:0 0 4px;font:600 14px var(--f-body)}
-.ctip div{display:grid;grid-template-columns:10px 1fr auto;gap:6px;align-items:center}
-.ctip div i{width:8px;height:8px;border-radius:2px}
-.ctip div span:last-child{font-family:var(--f-mono);color:var(--ink2);text-align:right}
-.ctip .tot{border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-weight:600}
-.pvgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
-@media (max-width:900px){.pvgrid{grid-template-columns:minmax(0,1fr)}}
-.pvbox{height:clamp(320px,62vw,min(60vh,600px))}
-#pv{display:block;width:100%;height:100%}
-.pvyear{position:absolute;left:14px;top:10px;display:flex;flex-direction:column;pointer-events:none}
-.pvyear b{font-family:var(--f-display);font-stretch:80%;font-weight:800;font-size:clamp(40px,7vw,68px);line-height:.95;color:var(--ink);font-variant-numeric:tabular-nums}
-.pvyear span{font-family:var(--f-mono);font-size:12.5px;color:var(--ink2)}
-.pvside{display:flex;flex-direction:column;gap:12px;min-width:0}
-.player{display:flex;align-items:center;gap:10px}
-.play{width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:var(--surface);font-size:16px;cursor:pointer;flex:none}
-.play:focus-visible,#pvrange:focus-visible{outline:2px solid var(--g1);outline-offset:2px}
-#pvrange{flex:1;min-width:0;accent-color:var(--g0)}
-.pvstats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pvstats div{display:flex;flex-direction:column;gap:2px}
-.pvstats b{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}
-.pvstats small{color:var(--ink2);font-size:12.5px}
-#pvbars svg text{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
-#pvbars rect{cursor:pointer}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+#vyrobny-app,#vyrobny-app *{box-sizing:border-box}
+#vyrobny-app{background:var(--bg);color:var(--ink)}
+#vyrobny-app{font-family:var(--f-body);font-size:15px;line-height:1.45}
+#vyrobny-app .wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+#vyrobny-app .vyr-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+#vyrobny-app h1{font-family:var(--f-display);font-stretch:78%;font-weight:750;font-size:clamp(28px,4.2vw,44px);line-height:1;letter-spacing:-.01em;margin:0;text-wrap:balance}
+#vyrobny-app .sub{color:var(--ink2);margin:6px 0 0;max-width:62ch}
+#vyrobny-app .stamp{font-family:var(--f-mono);font-size:12px;color:var(--muted);text-align:right;line-height:1.6}
+#vyrobny-app .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
+@media (max-width:900px){#vyrobny-app .grid{grid-template-columns:minmax(0,1fr)}}
+#vyrobny-app .mapbox{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;height:clamp(360px,72vw,min(68vh,720px))}
+#vyrobny-app canvas#vyr-map{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+#vyrobny-app canvas#vyr-map:active{cursor:grabbing}
+#vyrobny-app .tools{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}
+#vyrobny-app .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:2px;gap:2px}
+#vyrobny-app .seg button{font:600 13px var(--f-body);color:var(--ink2);background:none;border:0;border-radius:6px;padding:5px 10px;cursor:pointer}
+#vyrobny-app .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+#vyrobny-app .seg button:focus-visible,#vyrobny-app .chip:focus-visible,#vyrobny-app .zoom button:focus-visible,#vyrobny-app .link:focus-visible{outline:2px solid var(--g1);outline-offset:2px}
+#vyrobny-app .zoom{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:4px}
+#vyrobny-app .zoom button{width:32px;height:32px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:8px;font:600 17px var(--f-body);cursor:pointer}
+#vyrobny-app .legend{position:absolute;left:10px;bottom:10px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ink2);display:flex;flex-direction:column;gap:6px;max-width:calc(100% - 20px)}
+#vyrobny-app .legend .t{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+#vyrobny-app .sizes{display:flex;align-items:flex-end;gap:12px}
+#vyrobny-app .sizes span{display:flex;flex-direction:column;align-items:center;gap:3px;font-family:var(--f-mono);font-size:11px}
+#vyrobny-app .sizes i{display:block;border-radius:50%;border:1.5px solid var(--ink2)}
+#vyrobny-app .ramp{display:flex}
+#vyrobny-app .ramp span{display:flex;flex-direction:column;gap:3px;font-family:var(--f-mono);font-size:10.5px;min-width:38px}
+#vyrobny-app .ramp b{display:block;height:10px}
+#vyrobny-app .tip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.14);max-width:290px;z-index:5}
+#vyrobny-app .tip h4{margin:0 0 3px;font:600 14px var(--f-body)}
+#vyrobny-app .tip .m{font-family:var(--f-mono);font-size:12px;color:var(--ink2)}
+#vyrobny-app .tip ul{margin:5px 0 0;padding:0;list-style:none}
+#vyrobny-app .tip li{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}
+#vyrobny-app .tip li span:last-child{font-family:var(--f-mono);color:var(--ink2);white-space:nowrap}
+#vyrobny-app .hint{position:absolute;right:10px;bottom:10px;font-size:12px;color:var(--muted);background:color-mix(in srgb,var(--surface) 85%,transparent);padding:3px 8px;border-radius:6px}
+#vyrobny-app .vyr-aside{display:flex;flex-direction:column;gap:14px;min-width:0}
+#vyrobny-app .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+#vyrobny-app .lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#vyrobny-app .chips{display:flex;flex-direction:column;gap:4px}
+#vyrobny-app .chip{display:grid;grid-template-columns:14px minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:7px;padding:5px 6px;cursor:pointer;color:var(--ink);font:15px var(--f-body)}
+#vyrobny-app .chip:hover{background:var(--hover)}
+#vyrobny-app .chip .sw{width:12px;height:12px;border-radius:3px}
+#vyrobny-app .chip .v{font-family:var(--f-mono);font-size:12.5px;color:var(--ink2)}
+#vyrobny-app .chip[aria-pressed="false"]{color:var(--muted)}
+#vyrobny-app .chip[aria-pressed="false"] .sw{background:transparent!important;outline:1.5px solid var(--line2);outline-offset:-1.5px}
+#vyrobny-app .rowlinks{display:flex;gap:14px}
+#vyrobny-app .link{background:none;border:0;padding:0;color:var(--ink2);font:600 13px var(--f-body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+#vyrobny-app .kpi{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+#vyrobny-app .kpi .big{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:34px;line-height:1}
+#vyrobny-app .kpi .unit{font-size:15px;color:var(--ink2);font-weight:600}
+#vyrobny-app .kpi .small{color:var(--ink2);font-size:14px}
+#vyrobny-app .selname{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:20px;line-height:1.1}
+#vyrobny-app .bars{display:flex;flex-direction:column;gap:7px}
+#vyrobny-app .bar{display:grid;grid-template-columns:96px minmax(0,1fr) 74px;gap:8px;align-items:center;font-size:13px}
+#vyrobny-app .bar .track{height:10px;border-radius:0 4px 4px 0;background:transparent;position:relative}
+#vyrobny-app .bar .fill{height:100%;border-radius:0 4px 4px 0;min-width:2px}
+#vyrobny-app .bar .num{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--ink2);font-variant-numeric:tabular-nums}
+#vyrobny-app .top{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+#vyrobny-app .top li{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:13.5px}
+#vyrobny-app .top li .d{width:8px;height:8px;border-radius:50%;align-self:center}
+#vyrobny-app .top li .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#vyrobny-app .top li .nm small{color:var(--muted)}
+#vyrobny-app .top li .n{font-family:var(--f-mono);font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+#vyrobny-app .tablebox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+#vyrobny-app .tablebox h2{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:20px;margin:0}
+#vyrobny-app .scroll{overflow-x:auto}
+#vyrobny-app table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
+#vyrobny-app th,#vyrobny-app td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+#vyrobny-app th{font:500 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+#vyrobny-app td:first-child,#vyrobny-app th:first-child{text-align:left}
+#vyrobny-app td{font-family:var(--f-mono);font-size:12.5px;color:var(--ink2)}
+#vyrobny-app td:first-child{font-family:var(--f-body);font-size:14px;color:var(--ink)}
+#vyrobny-app tr.sel td{background:var(--hover)}
+#vyrobny-app th .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px}
+#vyrobny-app .notes{color:var(--ink2);font-size:13.5px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 28px}
+#vyrobny-app .notes p{margin:0;max-width:65ch}
+#vyrobny-app .notes b{color:var(--ink)}
+#vyrobny-app .notes a{color:var(--ink);text-underline-offset:2px}
+#vyrobny-app .secthead{display:flex;flex-direction:column;gap:4px}
+#vyrobny-app .note{margin:0;color:var(--ink2);font-size:14px;max-width:72ch}
+#vyrobny-app .chartwrap{position:relative}
+#vyrobny-app #vyr-cum{height:340px;width:100%}
+#vyrobny-app #vyr-cum svg text{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+#vyrobny-app .leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink2)}
+#vyrobny-app .leg span{display:inline-flex;align-items:center;gap:6px}
+#vyrobny-app .leg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+#vyrobny-app .ctip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-size:12.5px;box-shadow:0 6px 20px rgba(0,0,0,.14);min-width:190px;z-index:4}
+#vyrobny-app .ctip h4{margin:0 0 4px;font:600 14px var(--f-body)}
+#vyrobny-app .ctip div{display:grid;grid-template-columns:10px 1fr auto;gap:6px;align-items:center}
+#vyrobny-app .ctip div i{width:8px;height:8px;border-radius:2px}
+#vyrobny-app .ctip div span:last-child{font-family:var(--f-mono);color:var(--ink2);text-align:right}
+#vyrobny-app .ctip .tot{border-top:1px solid var(--line);margin-top:4px;padding-top:4px;font-weight:600}
+#vyrobny-app .pvgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media (max-width:900px){#vyrobny-app .pvgrid{grid-template-columns:minmax(0,1fr)}}
+#vyrobny-app .pvbox{height:clamp(320px,62vw,min(60vh,600px))}
+#vyrobny-app #vyr-pv{display:block;width:100%;height:100%}
+#vyrobny-app .pvyear{position:absolute;left:14px;top:10px;display:flex;flex-direction:column;pointer-events:none}
+#vyrobny-app .pvyear b{font-family:var(--f-display);font-stretch:80%;font-weight:800;font-size:clamp(40px,7vw,68px);line-height:.95;color:var(--ink);font-variant-numeric:tabular-nums}
+#vyrobny-app .pvyear span{font-family:var(--f-mono);font-size:12.5px;color:var(--ink2)}
+#vyrobny-app .pvside{display:flex;flex-direction:column;gap:12px;min-width:0}
+#vyrobny-app .player{display:flex;align-items:center;gap:10px}
+#vyrobny-app .play{width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:var(--surface);font-size:16px;cursor:pointer;flex:none}
+#vyrobny-app .play:focus-visible,#vyrobny-app #vyr-pvrange:focus-visible{outline:2px solid var(--g1);outline-offset:2px}
+#vyrobny-app #vyr-pvrange{flex:1;min-width:0;accent-color:var(--g0)}
+#vyrobny-app .pvstats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#vyrobny-app .pvstats div{display:flex;flex-direction:column;gap:2px}
+#vyrobny-app .pvstats b{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:24px;line-height:1.05;font-variant-numeric:tabular-nums}
+#vyrobny-app .pvstats small{color:var(--ink2);font-size:12.5px}
+#vyrobny-app #vyr-pvbars svg text{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+#vyrobny-app #vyr-pvbars rect{cursor:pointer}
+@media (prefers-reduced-motion:reduce){#vyrobny-app,#vyrobny-app *{transition:none!important}}
 </style>
 
+<div id="vyrobny-app" class="vyr-page">
+<!--vyr:markup-->
 <div class="wrap">
-  <header>
+  <div class="vyr-head">
     <div>
       <h1>Výrobny elektřiny v Česku</h1>
       <p class="sub">Licencované výrobny podle technických údajů ERÚ. Výrobny firem stojí na své parcele z RÚIAN, výrobny fyzických osob jsou sečtené po katastrálních územích. Velikost bodu odpovídá instalovanému elektrickému výkonu.</p>
     </div>
-    <div class="stamp" id="stamp"></div>
-  </header>
+    <div class="stamp" id="vyr-stamp"></div>
+  </div>
 
   <div class="grid">
-    <div class="mapbox" id="mapbox">
-      <canvas id="map" aria-label="Mapa výroben elektřiny" role="img"></canvas>
+    <div class="mapbox" id="vyr-mapbox">
+      <canvas id="vyr-map" aria-label="Mapa výroben elektřiny" role="img"></canvas>
       <div class="tools">
         <div class="seg" role="group" aria-label="Zobrazení">
-          <button id="m-pts" aria-pressed="true">Body</button>
-          <button id="m-chor" aria-pressed="false">Kartogram okresů</button>
+          <button id="vyr-m-pts" aria-pressed="true">Body</button>
+          <button id="vyr-m-chor" aria-pressed="false">Kartogram okresů</button>
         </div>
       </div>
       <div class="zoom">
-        <button id="z-in" aria-label="Přiblížit">+</button>
-        <button id="z-out" aria-label="Oddálit">−</button>
-        <button id="z-reset" aria-label="Celá republika" title="Celá republika">⤢</button>
+        <button id="vyr-z-in" aria-label="Přiblížit">+</button>
+        <button id="vyr-z-out" aria-label="Oddálit">−</button>
+        <button id="vyr-z-reset" aria-label="Celá republika" title="Celá republika">⤢</button>
       </div>
-      <div class="legend" id="legend"></div>
-      <div class="hint" id="hint">Kliknutím vyberete okres</div>
-      <div class="tip" id="tip" hidden></div>
+      <div class="legend" id="vyr-legend"></div>
+      <div class="hint" id="vyr-hint">Kliknutím vyberete okres</div>
+      <div class="tip" id="vyr-tip" hidden></div>
     </div>
 
-    <aside>
+    <div class="vyr-aside">
       <div class="panel">
         <div class="lbl">Typ zdroje</div>
-        <div class="chips" id="chips"></div>
-        <div class="rowlinks"><button class="link" id="all">Zobrazit vše</button><button class="link" id="ren">Jen obnovitelné</button></div>
+        <div class="chips" id="vyr-chips"></div>
+        <div class="rowlinks"><button class="link" id="vyr-all">Zobrazit vše</button><button class="link" id="vyr-ren">Jen obnovitelné</button></div>
         <div class="lbl" style="margin-top:4px">Minimální výkon výrobny</div>
-        <div class="seg" role="group" aria-label="Minimální výkon" id="minseg">
+        <div class="seg" role="group" aria-label="Minimální výkon" id="vyr-minseg">
           <button data-v="0" aria-pressed="true">Vše</button>
           <button data-v="100" aria-pressed="false">100 kW</button>
           <button data-v="1000" aria-pressed="false">1 MW</button>
           <button data-v="10000" aria-pressed="false">10 MW</button>
         </div>
       </div>
-      <div class="panel" id="sum"></div>
-    </aside>
+      <div class="panel" id="vyr-sum"></div>
+    </div>
   </div>
 
   <section class="tablebox">
     <h2>Instalovaný výkon po krajích</h2>
-    <div class="scroll"><table id="tbl"></table></div>
+    <div class="scroll"><table id="vyr-tbl"></table></div>
   </section>
 
   <section class="tablebox">
@@ -194,8 +210,8 @@ th .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:
       <h2>Jak přibýval instalovaný výkon</h2>
       <p class="note">Kumulativní výkon dnešních licencovaných výroben podle roku, kdy je ERÚ zaregistroval. Výrobny, které fungovaly už před zavedením licencí, jsou v roce 2002. Elektrárny, které mezitím skončily, v datech nejsou.</p>
     </div>
-    <div class="chartwrap"><div id="cum"></div><div class="ctip" id="ctip" hidden></div></div>
-    <div class="leg" id="cumleg"></div>
+    <div class="chartwrap"><div id="vyr-cum"></div><div class="ctip" id="vyr-ctip" hidden></div></div>
+    <div class="leg" id="vyr-cumleg"></div>
   </section>
 
   <section class="tablebox">
@@ -204,15 +220,15 @@ th .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:
       <p class="note">Každý snímek ukazuje výrobny zaregistrované do daného roku. Výrazně jsou ty, které v tom roce přibyly. Výrobny firem stojí na parcele, výrobny fyzických osob jsou sečtené po katastrech.</p>
     </div>
     <div class="pvgrid">
-      <div class="mapbox pvbox"><canvas id="pv" role="img" aria-label="Animovaná mapa fotovoltaik podle roku registrace"></canvas><div class="pvyear"><b id="pvy">2026</b><span id="pvadd"></span></div></div>
+      <div class="mapbox pvbox"><canvas id="vyr-pv" role="img" aria-label="Animovaná mapa fotovoltaik podle roku registrace"></canvas><div class="pvyear"><b id="vyr-pvy">2026</b><span id="vyr-pvadd"></span></div></div>
       <div class="pvside">
-        <div class="player"><button class="play" id="pvplay" aria-label="Přehrát">▶</button><input type="range" id="pvrange" min="2007" max="2026" step="1" value="2026" aria-label="Rok"></div>
+        <div class="player"><button class="play" id="vyr-pvplay" aria-label="Přehrát">▶</button><input type="range" id="vyr-pvrange" min="2007" max="2026" step="1" value="2026" aria-label="Rok"></div>
         <div class="pvstats">
-          <div><small>Celkem do roku</small><b id="pvcum"></b><small id="pvcumn"></small></div>
-          <div><small>Přibylo v roce</small><b id="pvnew"></b><small id="pvnewn"></small></div>
+          <div><small>Celkem do roku</small><b id="vyr-pvcum"></b><small id="vyr-pvcumn"></small></div>
+          <div><small>Přibylo v roce</small><b id="vyr-pvnew"></b><small id="vyr-pvnewn"></small></div>
         </div>
         <div class="lbl">Nový výkon FVE po letech (MW)</div>
-        <div id="pvbars"></div>
+        <div id="vyr-pvbars"></div>
       </div>
     </div>
   </section>
@@ -225,12 +241,14 @@ th .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:
     <p><b>Soukromí.</b> Výrobny fyzických osob jsou v mapě bez názvu a jen jako součet za katastr, aby nešlo dohledat konkrétní dům.</p>
   </section>
 </div>
+<!--/vyr:markup-->
+</div>
 
-<script id="data" type="application/json">__DATA__</script>
+<script id="vyr-data" type="application/json">__DATA__</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script>
+<script id="vyr-js">
 (function(){
-const DATA=JSON.parse(document.getElementById('data').textContent);
+const DATA=window.VYROBNY_DATA||JSON.parse(document.getElementById('vyr-data').textContent);
 const P=DATA.P,K=DATA.K,NAMES=DATA.N,DIST=DATA.D,REG=DATA.R;
 const GROUPS=[
  {n:'Slunce',l:'Solární'},{n:'Voda',l:'Vodní a přečerpávací'},{n:'Vítr',l:'Větrné'},
@@ -238,17 +256,18 @@ const GROUPS=[
 const NP=P.k.length, NK=K.n.length, ND=DIST.features.length, NR=REG.features.length;
 const kuDist=K.d, distKr=new Int16Array(ND); DIST.features.forEach(f=>distKr[f.properties.i]=f.properties.kr);
 const st={on:[1,1,1,1,1,1],min:0,mode:'pts',sel:null};
-const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const APP=document.getElementById('vyrobny-app');
+const css=n=>getComputedStyle(APP).getPropertyValue(n).trim();
 let C={};
 function readColors(){C={g:[0,1,2,3,4,5].map(i=>css('--g'+i)),s:[1,2,3,4,5,6,7].map(i=>css('--s'+i)),surface:css('--surface'),land:css('--land'),line:css('--line'),line2:css('--line2'),kraj:css('--border-kraj'),ink:css('--ink'),ink2:css('--ink2'),muted:css('--muted')}}
 readColors();
 
 const fmtMW=kw=>{const mw=kw/1000; if(mw>=100) return Math.round(mw).toLocaleString('cs-CZ')+' MW'; if(mw>=1) return mw.toLocaleString('cs-CZ',{maximumFractionDigits:1})+' MW'; if(mw>=0.1) return mw.toLocaleString('cs-CZ',{maximumFractionDigits:2})+' MW'; return Math.round(kw).toLocaleString('cs-CZ')+' kW'};
 const fmtN=n=>n.toLocaleString('cs-CZ');
-document.getElementById('stamp').innerHTML=`ERÚ TEZ ${DATA.meta.tez.split('-').reverse().join('. ')}<br>licence ${DATA.meta.lic.split('-').reverse().join('. ')} · RÚIAN ${DATA.meta.ruian.split('-').reverse().join('. ')}`;
+document.getElementById('vyr-stamp').innerHTML=`ERÚ TEZ ${DATA.meta.tez.split('-').reverse().join('. ')}<br>licence ${DATA.meta.lic.split('-').reverse().join('. ')} · RÚIAN ${DATA.meta.ruian.split('-').reverse().join('. ')}`;
 
 /* projection: konformní kuželové zobrazení, podobně jako české mapy */
-const canvas=document.getElementById('map'),box=document.getElementById('mapbox'),ctx=canvas.getContext('2d');
+const canvas=document.getElementById('vyr-map'),box=document.getElementById('vyr-mapbox'),ctx=canvas.getContext('2d');
 let W=0,H=0,DPR=1;
 const proj=d3.geoConicConformal().parallels([49.1,50.6]).rotate([-15.5,0]);
 const path=d3.geoPath(proj,ctx);
@@ -321,12 +340,12 @@ function render(){
 /* zoom */
 const zoom=d3.zoom().scaleExtent([1,40]).clickDistance(4).on('zoom',e=>{T=e.transform;hideTip();draw()});
 const sel=d3.select(canvas).call(zoom);
-document.getElementById('z-in').onclick=()=>sel.transition().duration(250).call(zoom.scaleBy,1.8);
-document.getElementById('z-out').onclick=()=>sel.transition().duration(250).call(zoom.scaleBy,1/1.8);
-document.getElementById('z-reset').onclick=()=>sel.transition().duration(300).call(zoom.transform,d3.zoomIdentity);
+document.getElementById('vyr-z-in').onclick=()=>sel.transition().duration(250).call(zoom.scaleBy,1.8);
+document.getElementById('vyr-z-out').onclick=()=>sel.transition().duration(250).call(zoom.scaleBy,1/1.8);
+document.getElementById('vyr-z-reset').onclick=()=>sel.transition().duration(300).call(zoom.transform,d3.zoomIdentity);
 
 /* hit testing */
-const tip=document.getElementById('tip');
+const tip=document.getElementById('vyr-tip');
 function hideTip(){tip.hidden=true}
 function distAt(mx,my){ const ll=proj.invert([T.invertX(mx),T.invertY(my)]); if(!ll) return null;
   for(const f of DIST.features) if(d3.geoContains(f,ll)) return f.properties.i; return null }
@@ -357,27 +376,27 @@ canvas.addEventListener('click',e=>{ const r=canvas.getBoundingClientRect(); con
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
 /* panel */
-const chipsEl=document.getElementById('chips');
+const chipsEl=document.getElementById('vyr-chips');
 const totals=[0,0,0,0,0,0]; for(let i=0;i<NP;i++) totals[P.g[i]]+=P.w[i];
-GROUPS.forEach((g,i)=>{ const b=document.createElement('button'); b.className='chip'; b.id='chip'+i; b.setAttribute('aria-pressed','true');
+GROUPS.forEach((g,i)=>{ const b=document.createElement('button'); b.className='chip'; b.id='vyr-chip'+i; b.setAttribute('aria-pressed','true');
   b.innerHTML=`<span class="sw" style="background:var(--g${i})"></span><span>${g.l}</span><span class="v">${fmtMW(totals[i])}</span>`;
   b.onclick=()=>{st.on[i]=st.on[i]?0:1; sync()}; chipsEl.appendChild(b) });
-document.getElementById('all').onclick=()=>{st.on=[1,1,1,1,1,1];sync()};
-document.getElementById('ren').onclick=()=>{st.on=[1,1,1,0,0,0];sync()};
-document.querySelectorAll('#minseg button').forEach(b=>b.onclick=()=>{st.min=+b.dataset.v; document.querySelectorAll('#minseg button').forEach(x=>x.setAttribute('aria-pressed',x===b)); sync()});
-const mp=document.getElementById('m-pts'),mc=document.getElementById('m-chor');
+document.getElementById('vyr-all').onclick=()=>{st.on=[1,1,1,1,1,1];sync()};
+document.getElementById('vyr-ren').onclick=()=>{st.on=[1,1,1,0,0,0];sync()};
+document.querySelectorAll('#vyr-minseg button').forEach(b=>b.onclick=()=>{st.min=+b.dataset.v; document.querySelectorAll('#vyr-minseg button').forEach(x=>x.setAttribute('aria-pressed',x===b)); sync()});
+const mp=document.getElementById('vyr-m-pts'),mc=document.getElementById('vyr-m-chor');
 mp.onclick=()=>{st.mode='pts';mp.setAttribute('aria-pressed','true');mc.setAttribute('aria-pressed','false');hideTip();legend();draw()};
 mc.onclick=()=>{st.mode='chor';mc.setAttribute('aria-pressed','true');mp.setAttribute('aria-pressed','false');hideTip();legend();draw()};
 
-function legend(){ const el=document.getElementById('legend');
+function legend(){ const el=document.getElementById('vyr-legend');
   if(st.mode==='pts'){ const s=[1000,100000,1000000]; el.innerHTML=`<div class="t">Instalovaný výkon</div><div class="sizes">${s.map(kw=>{const r=R(kw);return `<span><i style="width:${2*r}px;height:${2*r}px"></i>${fmtMW(kw)}</span>`}).join('')}</div>`; }
   else { const lab=['< 1',...TH.map((t,i)=>i<TH.length-1?`${t}–${TH[i+1]}`:`≥ ${t}`)];
     el.innerHTML=`<div class="t">Výkon v okrese (MW)</div><div class="ramp">${C.s.map((c,i)=>`<span><b style="background:${c}"></b>${lab[i]}</span>`).join('')}</div>` } }
 
-function sync(){ GROUPS.forEach((g,i)=>document.getElementById('chip'+i).setAttribute('aria-pressed',st.on[i]?'true':'false'));
+function sync(){ GROUPS.forEach((g,i)=>document.getElementById('vyr-chip'+i).setAttribute('aria-pressed',st.on[i]?'true':'false'));
   aggregate(); buildQT(); updatePanel(); renderTable(); draw() }
 
-function updatePanel(){ const el=document.getElementById('sum'); const by=[0,0,0,0,0,0]; let n=0,tot=0; const top=[];
+function updatePanel(){ const el=document.getElementById('vyr-sum'); const by=[0,0,0,0,0,0]; let n=0,tot=0; const top=[];
   for(let i=0;i<NP;i++){ const g=P.g[i]; if(!st.on[g]||P.w[i]<st.min) continue; if(st.sel!=null&&kuDist[P.k[i]]!==st.sel) continue;
     by[g]+=P.w[i]; n++; tot+=P.w[i]; if(top.length<8&&P.n[i]>=0) top.push(i) }
   const mx=Math.max(...by,1); const name=st.sel==null?'Celá republika':DIST.features[st.sel].properties.n;
@@ -387,8 +406,8 @@ function updatePanel(){ const el=document.getElementById('sum'); const by=[0,0,0
    <div class="bars">${GROUPS.map((g,i)=>st.on[i]?`<div class="bar"><span>${g.n}</span><span class="track"><span class="fill" style="display:block;width:${(by[i]/mx*100).toFixed(1)}%;background:var(--g${i})"></span></span><span class="num">${fmtMW(by[i])}</span></div>`:'').join('')}</div>
    <div class="lbl" style="margin-top:4px">Největší výrobny</div>
    <ul class="top">${top.map(i=>`<li><span class="d" style="background:var(--g${P.g[i]})"></span><span class="nm" title="${esc(NAMES[P.n[i]])}">${esc(NAMES[P.n[i]])} <small>${esc(K.o[P.k[i]])}</small></span><span class="n">${fmtMW(P.w[i])}</span></li>`).join('')||'<li><span></span><span class="nm">Žádná výrobna neodpovídá filtru.</span></li>'}</ul>
-   ${st.sel!=null?'<button class="link" id="clr">Zpět na celou republiku</button>':''}`;
-  const c=document.getElementById('clr'); if(c) c.onclick=()=>{st.sel=null;updatePanel();renderTable();draw()} }
+   ${st.sel!=null?'<button class="link" id="vyr-clr">Zpět na celou republiku</button>':''}`;
+  const c=document.getElementById('vyr-clr'); if(c) c.onclick=()=>{st.sel=null;updatePanel();renderTable();draw()} }
 
 function renderTable(){ const rows=REG.features.map(f=>({i:f.properties.i,n:f.properties.n,g:[0,0,0,0,0,0]}));
   for(let i=0;i<NP;i++){ const g=P.g[i]; if(!st.on[g]||P.w[i]<st.min) continue; rows[distKr[kuDist[P.k[i]]]].g[g]+=P.w[i] }
@@ -396,7 +415,7 @@ function renderTable(){ const rows=REG.features.map(f=>({i:f.properties.i,n:f.pr
   const selKr=st.sel!=null?distKr[st.sel]:-1; const cols=GROUPS.map((g,i)=>i).filter(i=>st.on[i]);
   const f=kw=>kw?(kw/1000).toLocaleString('cs-CZ',{maximumFractionDigits:kw<1e5?1:0}):'–';
   const sum=rows.reduce((a,r)=>{r.g.forEach((v,i)=>a[i]+=v);return a},[0,0,0,0,0,0]); const st_=sum.reduce((a,b)=>a+b,0);
-  document.getElementById('tbl').innerHTML=`<thead><tr><th>Kraj</th>${cols.map(i=>`<th><span class="sw" style="background:var(--g${i})"></span>${GROUPS[i].n} MW</th>`).join('')}<th>Celkem MW</th></tr></thead>
+  document.getElementById('vyr-tbl').innerHTML=`<thead><tr><th>Kraj</th>${cols.map(i=>`<th><span class="sw" style="background:var(--g${i})"></span>${GROUPS[i].n} MW</th>`).join('')}<th>Celkem MW</th></tr></thead>
    <tbody>${rows.map(r=>`<tr class="${r.i===selKr?'sel':''}"><td>${esc(r.n)}</td>${cols.map(i=>`<td>${f(r.g[i])}</td>`).join('')}<td><b>${f(r.t)}</b></td></tr>`).join('')}
    <tr><td><b>Česko</b></td>${cols.map(i=>`<td><b>${f(sum[i])}</b></td>`).join('')}<td><b>${f(st_)}</b></td></tr></tbody>` }
 
@@ -410,10 +429,10 @@ const Y0=2002,Y1=2026,YEARS=d3.range(Y0,Y1+1),ORDER=[5,4,3,1,2,0];
 const addByYear=YEARS.map(()=>[0,0,0,0,0,0]);
 for(let i=0;i<NP;i++){ const y=Math.max(Y0,2000+P.yr[i]); addByYear[y-Y0][P.g[i]]+=P.w[i] }
 const cumRows=[]; {let run=[0,0,0,0,0,0]; YEARS.forEach((y,j)=>{ run=run.map((v,g)=>v+addByYear[j][g]); const r={year:y}; for(let g=0;g<6;g++) r['g'+g]=run[g]/1e6; cumRows.push(r) })}
-document.getElementById('cumleg').innerHTML=[...ORDER].reverse().map(g=>`<span><i style="background:var(--g${g})"></i>${GROUPS[g].l}</span>`).join('');
+document.getElementById('vyr-cumleg').innerHTML=[...ORDER].reverse().map(g=>`<span><i style="background:var(--g${g})"></i>${GROUPS[g].l}</span>`).join('');
 const fGW=v=>v>=1?v.toLocaleString('cs-CZ',{maximumFractionDigits:2})+' GW':Math.round(v*1000).toLocaleString('cs-CZ')+' MW';
 function drawCum(){
-  const el=document.getElementById('cum'),ct=document.getElementById('ctip'); const w=el.clientWidth,h=el.clientHeight; if(!w) return;
+  const el=document.getElementById('vyr-cum'),ct=document.getElementById('vyr-ctip'); const w=el.clientWidth,h=el.clientHeight; if(!w) return;
   const m={t:10,r:14,b:26,l:46};
   const x=d3.scaleLinear().domain([Y0,Y1]).range([m.l,w-m.r]);
   const st_=d3.stack().keys(ORDER.map(g=>'g'+g))(cumRows);
@@ -441,7 +460,7 @@ const PV0=2007, PVYEARS=d3.range(PV0,Y1+1);
 const pvIdx=[]; for(let i=0;i<NP;i++) if(P.g[i]===0) pvIdx.push(i);
 const pvY=i=>Math.max(PV0,2000+P.yr[i]);
 const pvAdd=PVYEARS.map(()=>({w:0,c:0})); for(const i of pvIdx){ const a=pvAdd[pvY(i)-PV0]; a.w+=P.w[i]; a.c++ }
-const pvCanvas=document.getElementById('pv'),pctx=pvCanvas.getContext('2d'),pvBox=pvCanvas.parentElement;
+const pvCanvas=document.getElementById('vyr-pv'),pctx=pvCanvas.getContext('2d'),pvBox=pvCanvas.parentElement;
 const proj2=d3.geoConicConformal().parallels([49.1,50.6]).rotate([-15.5,0]); const path2=d3.geoPath(proj2,pctx);
 let PW=0,PH=0,pvPos=null,pvKu=null,pvMF=1,pvYear=Y1,pvTimer=null; const pvCache=new Map();
 function pvResize(){ const r=pvBox.getBoundingClientRect(); PW=r.width;PH=r.height; const dpr=window.devicePixelRatio||1; pvCanvas.width=Math.round(PW*dpr); pvCanvas.height=Math.round(PH*dpr);
@@ -464,12 +483,12 @@ function pvRender(){ if(!PW) return; pctx.fillStyle=C.surface; pctx.fillRect(0,0
   pctx.globalAlpha=1; pctx.strokeStyle=C.surface; pctx.lineWidth=.8;
   for(const a of cur){ const r=Rpv(a.w)*1.15+.4; pctx.beginPath(); pctx.arc(a.p[0],a.p[1],r,0,6.2832); pctx.fill(); if(r>2) pctx.stroke() }
   const j=pvYear-PV0; let cw=0,cc=0; for(let t=0;t<=j;t++){cw+=pvAdd[t].w;cc+=pvAdd[t].c}
-  document.getElementById('pvy').textContent=pvYear===PV0?'do '+PV0:pvYear;
-  document.getElementById('pvadd').textContent='+ '+fmtMW(pvAdd[j].w)+' v tomto roce';
-  document.getElementById('pvcum').textContent=fmtMW(cw); document.getElementById('pvcumn').textContent=fmtN(cc)+' výroben';
-  document.getElementById('pvnew').textContent=fmtMW(pvAdd[j].w); document.getElementById('pvnewn').textContent=fmtN(pvAdd[j].c)+' výroben';
-  document.getElementById('pvrange').value=pvYear; drawPvBars() }
-function drawPvBars(){ const el=document.getElementById('pvbars'); const w=el.clientWidth||280,h=150,m={t:14,r:4,b:20,l:4};
+  document.getElementById('vyr-pvy').textContent=pvYear===PV0?'do '+PV0:pvYear;
+  document.getElementById('vyr-pvadd').textContent='+ '+fmtMW(pvAdd[j].w)+' v tomto roce';
+  document.getElementById('vyr-pvcum').textContent=fmtMW(cw); document.getElementById('vyr-pvcumn').textContent=fmtN(cc)+' výroben';
+  document.getElementById('vyr-pvnew').textContent=fmtMW(pvAdd[j].w); document.getElementById('vyr-pvnewn').textContent=fmtN(pvAdd[j].c)+' výroben';
+  document.getElementById('vyr-pvrange').value=pvYear; drawPvBars() }
+function drawPvBars(){ const el=document.getElementById('vyr-pvbars'); const w=el.clientWidth||280,h=150,m={t:14,r:4,b:20,l:4};
   const x=d3.scaleBand().domain(PVYEARS).range([m.l,w-m.r]).padding(.18); const ymax=d3.max(pvAdd,a=>a.w)/1000;
   const y=d3.scaleLinear().domain([0,ymax]).range([h-m.b,m.t]);
   const svg=d3.select(el).html('').append('svg').attr('width',w).attr('height',h).attr('role','img').attr('aria-label','Nový výkon fotovoltaik po letech');
@@ -481,16 +500,17 @@ function drawPvBars(){ const el=document.getElementById('pvbars'); const w=el.cl
   const peak=PVYEARS.reduce((a,b)=>pvAdd[b-PV0].w>pvAdd[a-PV0].w?b:a,PV0);
   svg.append('text').attr('x',x(peak)+x.bandwidth()/2).attr('y',y(pvAdd[peak-PV0].w/1000)-4).attr('text-anchor','middle').text(Math.round(pvAdd[peak-PV0].w/1000).toLocaleString('cs-CZ'));
   [PV0,2016,Y1].forEach((d,i)=>svg.append('text').attr('x',x(d)+x.bandwidth()/2).attr('y',h-6).attr('text-anchor',i===0?'start':i===2?'end':'middle').text(d===PV0?'≤'+PV0:d)) }
-const playBtn=document.getElementById('pvplay');
+const playBtn=document.getElementById('vyr-pvplay');
 function stopPv(){ if(pvTimer){clearInterval(pvTimer);pvTimer=null} playBtn.textContent='▶'; playBtn.setAttribute('aria-label','Přehrát') }
 playBtn.onclick=()=>{ if(pvTimer){stopPv();return} if(pvYear>=Y1) pvYear=PV0; pvRender(); playBtn.textContent='❚❚'; playBtn.setAttribute('aria-label','Pozastavit');
   pvTimer=setInterval(()=>{ if(pvYear>=Y1){stopPv();return} pvYear++; pvRender() }, matchMedia('(prefers-reduced-motion: reduce)').matches?1400:900) };
-document.getElementById('pvrange').oninput=e=>{stopPv();pvYear=+e.target.value;pvRender()};
+document.getElementById('vyr-pvrange').oninput=e=>{stopPv();pvYear=+e.target.value;pvRender()};
 new ResizeObserver(()=>pvResize()).observe(pvBox);
-new ResizeObserver(()=>{drawCum();drawPvBars()}).observe(document.getElementById('cum'));
+new ResizeObserver(()=>{drawCum();drawPvBars()}).observe(document.getElementById('vyr-cum'));
 const reTheme=()=>{readColors();drawCum();pvRender()};
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',reTheme);
 new MutationObserver(reTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 drawCum();
 })();
+</script>
 </script>

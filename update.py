@@ -79,6 +79,8 @@ def main():
     tpl = (ROOT / 'src' / 'template.html').read_text(encoding='utf-8')
     page = tpl.replace('__DATA__', json.dumps(md, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/'))
     (cache / 'artifact.html').write_text(page, encoding='utf-8')  # verze bez kostry dokumentu (pro Claude artifact)
+    (out / 'embed').mkdir(exist_ok=True)
+    (out / 'embed' / 'vyrobny.js').write_text(build.embed_bundle(tpl, md, meta), encoding='utf-8')  # pro modul Kód v Divi
     (out / 'index.html').write_text('<!doctype html>\n<html lang="cs"><head><meta charset="utf-8">'
                                     '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
                                     '<style>body{margin:0}[hidden]{display:none!important}</style></head><body>\n' + page + '\n</body></html>', encoding='utf-8')

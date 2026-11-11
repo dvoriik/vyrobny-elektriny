@@ -237,3 +237,24 @@ def changes(prev, cur):
     for pid in both[d.values]:
         r = b.loc[pid]; rows.append(('změna výkonu', pid, r.provozovna_nazev, r.typ, r.ruian_obec, a.loc[pid].vykon_el_MW, r.vykon_el_MW))
     return pd.DataFrame(rows, columns=['zmena', 'provozovna_id', 'nazev', 'typ', 'obec', 'vykon_puvodni_MW', 'vykon_novy_MW'])
+
+
+def embed_bundle(template, data, meta):
+    """Soubor pro modul Kód v Divi (WordPress): vloží písma, styly a obsah do <div id="vyrobny-app">,
+    nastaví window.VYROBNY_DATA a spustí skript aplikace. Vše se bere ze stejné šablony jako samostatná stránka."""
+    fonts = re.search(r'<link rel="stylesheet" href="([^"]*fonts\.googleapis[^"]+)"', template).group(1)
+    css = re.search(r'<style id="vyr-css">(.*?)</style>', template, re.S).group(1)
+    markup = re.search(r'<!--vyr:markup-->(.*?)<!--/vyr:markup-->', template, re.S).group(1)
+    js = re.search(r'<script id="vyr-js">(.*?)</script>', template, re.S).group(1)
+    markup = re.sub(r'>\s+<', '> <', markup.strip())
+    j = lambda x: json.dumps(x, ensure_ascii=False)
+    return (f"/* Výrobny elektřiny v Česku: soubor pro modul Kód v Divi. Generováno automaticky z dat ERÚ {meta['tez']} "
+            f"(licence {meta['lic']}, RÚIAN {meta['ruian']}). Neupravovat ručně, mění se každý měsíc. */\n"
+            "(function(){var app=document.getElementById('vyrobny-app');if(!app){console.error('vyrobny: chybí <div id=\"vyrobny-app\">');return}"
+            "if(!document.getElementById('vyr-fonts')){var l=document.createElement('link');l.id='vyr-fonts';l.rel='stylesheet';"
+            f"l.href={j(fonts)};document.head.appendChild(l)}}"
+            "var old=document.getElementById('vyr-style');if(old)old.remove();"
+            f"var st=document.createElement('style');st.id='vyr-style';st.textContent={j(css)};document.head.appendChild(st);"
+            f"app.classList.remove('vyr-page');app.innerHTML={j(markup)};}})();\n"
+            "window.VYROBNY_DATA=" + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + ";\n"
+            + js.strip() + "\n")

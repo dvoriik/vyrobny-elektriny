@@ -25,7 +25,26 @@ Interaktivní mapa licencovaných výroben elektřiny z otevřených dat Energet
 | `docs/data/vyrobny.geojson` | body pro mapové nástroje (firmy jednotlivě, fyzické osoby sečtené po k.ú.) |
 | `docs/data/zmeny.csv` | nové, ukončené a změněné výrobny proti minulému běhu |
 | `docs/data/stav.json` | data zdrojů, odkazy, souhrny a počty kontrol |
+| `docs/embed/vyrobny.js` | mapa pro vložení do WordPressu (modul Kód v Divi) |
 | `state/` | trvalý stav mezi běhy: nalezené parcely a historie dat zahájení (verzováno v gitu) |
+
+## Vložení do webu (WordPress / Divi)
+
+Na [opendatastudio.cz/energetika](https://opendatastudio.cz/energetika/) je mapa vložená modulem **Kód** v Divi. Modul obsahuje jen `<div id="vyrobny-app">`, knihovnu d3 a krátký načítací skript. Ten stáhne soubor **`https://dvoriik.github.io/vyrobny-elektriny/embed/vyrobny.js`** se styly, obsahem, skriptem a daty a spustí ho.
+
+Soubor `docs/embed/vyrobny.js` generuje `update.py` při každém běhu ze **stejné šablony** (`src/template.html`) jako samostatnou stránku. Na webu je proto vždy stejný vzhled i data jako na GitHub Pages, bez zásahu ve WordPressu. Cache WordPressu (24 h) se ho netýká, protože se soubor načítá až v prohlížeči. GitHub Pages ho obnovuje do 10 minut.
+
+Ve vložené verzi platí jen světlý vzhled, tmavý režim má jen samostatná stránka (`class="vyr-page"`). Styly jsou omezené na `#vyrobny-app` a ID prvků mají předponu `vyr-`, aby se nebily se šablonou webu.
+
+## Úpravy vzhledu a nové grafiky
+
+Měňte jen **`src/template.html`**: styly v `<style id="vyr-css">`, obsah mezi `<!--vyr:markup-->` a `<!--/vyr:markup-->`, skript v `<script id="vyr-js">`. Pravidla:
+
+- **ID:** nová ID pište s předponou `vyr-` (`id="vyr-novy-graf"`, `getElementById('vyr-novy-graf')`).
+- **Styly:** nové styly začínejte `#vyrobny-app ` a barvy berte z proměnných (`var(--ink)`, `var(--g0)`…).
+- **Data:** jsou v objektu `DATA` (viz `build.map_data`). Když nový graf potřebuje další údaj, přidejte ho tam.
+
+Po pushi do `main` se workflow spustí samo, přepočítá výstupy a nasadí je na GitHub Pages. Do pár minut se změna projeví na samostatné stránce i na webu.
 
 ## Spuštění
 
@@ -40,7 +59,7 @@ První běh bez `state/` stáhne parcely z přibližně 3 100 obcí (asi 25 minu
 
 ## Automatická aktualizace
 
-Workflow `.github/workflows/update.yml` běží každý den 3.–12. v měsíci, protože ERÚ datum zveřejnění pevně nedrží. Když najde nová data, commitne `docs/` a `state/` a nasadí GitHub Pages. Ručně jde spustit v záložce Actions (volba *Přepočítat i bez nových dat*).
+Workflow `.github/workflows/update.yml` běží každý den 3.–12. v měsíci, protože ERÚ datum zveřejnění pevně nedrží. Spouští se také po každém pushi, který mění kód nebo šablonu. Když najde nová data, commitne `docs/` a `state/` a nasadí GitHub Pages. Ručně jde spustit v záložce Actions (volba *Přepočítat i bez nových dat*).
 
 V nastavení repozitáře je potřeba zapnout **Settings → Pages → Source: GitHub Actions**.
 
